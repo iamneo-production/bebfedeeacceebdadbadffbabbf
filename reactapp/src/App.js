@@ -1,15 +1,12 @@
-import React from 'react';
-import './App.css';
-import Stopwatch from './components/Stopwatch/Stopwatch';
-class App extends React.Component {
-  render() {
+import "./App.css";
+import StopWatch from "../src/components/StopWatch/StopWatch.jsx";
 
-    return (
-     <>
-      <Stopwatch />
-     </>
-    );
-  }
+function App() {
+  return (
+    <div className="App">
+      <StopWatch />
+    </div>
+  );
 }
 
 export default App;
