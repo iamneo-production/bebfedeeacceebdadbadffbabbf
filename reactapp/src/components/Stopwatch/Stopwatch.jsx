@@ -1,116 +1,77 @@
-import React from 'react';
+import React, { useState } from "react";
+import "./StopWatch.css";
 
-class Stopwatch extends React.Component{
-    constructor() {
+function StopWatch() {
+  const [isActive, setIsActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
+  const [time, setTime] = useState(0);
 
-        super();
-    
-        this.state = {
-          miliSec: 0,
-          Sec: 0,
-          min: 0,
-          start: true,
-          pause: false,
-          resume: false,
-          reset: false,
-    
-        }
-      }
-    
-    
-      startTimer = () => {
-        this.interval = setInterval(() => {    
-          this.setState({           
-            miliSec: this.state.miliSec === 100 ? 0 : this.state.miliSec + 1,
-            Sec: this.state.miliSec === 60 ? this.state.Sec + 1 :
-              this.state.Sec
-          })
-    
-          if (this.state.Sec === 60) {
-            this.setState({
-              min: this.state.Sec === 60 ? this.state.min + 1 :
-                this.state.min,
-              Sec: 0,
-            })
-          }
-        }, 1000);
-      }
-      startTimerNow = () => {
-    
-        this.setState({
-            start: false,
-            pause: true,
-            resume: false,
-            reset: true,
-        })
-        this.startTimer();    
-      }
-      pauseTimer = () => {
-        this.setState({
-          pause: false,
-          resume: true,
-    
-        })
-        clearInterval(this.interval);
-    
-      }
-      resumeTimer = () => {
-    
-        this.setState({
-          resume: false,
-          pause: true
-        })
-        setInterval(this.startTimer());
-    
-      }
-    
-      resetTimer = () => {
-        clearInterval(this.interval);
-        this.setState({
-          resume: true,
-          pause: false,
-          miliSec: 0,
-          Sec: 0,
-          min: 0,
-    
-        })
-      }
-    
-    
-      render() {
-    return(
-      <>
-      <div className="App">
-     <div className="App2">
+  React.useEffect(() => {
+    let interval = null;
 
-       <h1>React Stopwatch</h1>       
-       <p data-testid="time">
-         {this.state.min < 10 ? '0' + this.state.min : this.state.min} 
-         :{this.state.Sec < 10 ? '0' + this.state.Sec : this.state.Sec}  
-         :{this.state.miliSec < 10 ? '0' + this.state.miliSec : this.state.miliSec}
-       </p>
+    if (isActive && isPaused === false) {
+      interval = setInterval(() => {
+        setTime((time) => time + 10);
+      }, 10);
+    } else {
+      clearInterval(interval);
+    }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isActive, isPaused]);
 
-       {  this.state.pause === true ?
-         <button onClick={this.pauseTimer} style={{ margin: "5px" }} data-testid="pause">
-           Pause</button>
-         :(this.state.resume === true ) ?
-           <button onClick={this.resumeTimer} style={{ margin: "5px" }} data-testid="resume">Resume</button>
-          : 
-          <button onClick={this.startTimerNow} style={{ margin: "5px" }} data-testid="start">Start
-           </button>
-         }
+  const handleStart = () => {
+    setIsActive(true);
+    setIsPaused(false);
+  };
 
-       {this.state.reset === false ? <button data-testid="reset" className='rsbtn' onClick={this.resetTimer} disabled="disabled" >Reset</button>
-         : <button onClick={this.resetTimer}  data-testid="reset" className='rsbtn'>Reset</button>
+  const handlePauseResume = () => {
+    setIsPaused(!isPaused);
+  };
 
-       }
+  const handleReset = () => {
+    setIsActive(false);
+    setTime(0);
+  };
+  const StartButton = (
+    <div className="btn-grp">
+      <div className="btn btn-one btn-start" onClick={handleStart}>
+        Start
+      </div>
+      <div className="btn btn_hidden">Reset</div>
+    </div>
+  );
+  const ActiveButtons = (
+    <div className="btn-grp">
+      <div className="btn btn-one" onClick={handlePauseResume}>
+        {isPaused ? "Resume" : "Pause"}
+      </div>
+      <div className="btn btn-two" onClick={handleReset}>
+        Reset
+      </div>
+    </div>
+  );
 
-        <p style={{display:'none'}}>learn react</p>
-     </div>
-   </div>
-     </>
-    )
- }
+  return (
+    <div className="stop-watch">
+      <h1>React Stopwatch</h1>
+      <div className="timer">
+        <span className="digits">
+          {("0" + Math.floor((time / 60000) % 60)).slice(-2)}:
+        </span>
+        <span className="digits">
+          {("0" + Math.floor((time / 1000) % 60)).slice(-2)}:
+        </span>
+        <span className="digits mili-sec">
+          {("0" + ((time / 10) % 100)).slice(-2)}
+        </span>
+      </div>
+      <div className="Control-Buttons">
+        <div>{isActive ? ActiveButtons : StartButton}</div>
+      </div>
+    </div>
+  );
 }
 
-export default Stopwatch;
+export default StopWatch;
