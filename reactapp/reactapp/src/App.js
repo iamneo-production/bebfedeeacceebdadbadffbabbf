@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Stopwatch from './components/Stopwatch/Stopwatch';
+import Stopwatch from './Stopwatch';
 class App extends React.Component {
   render() {
 
